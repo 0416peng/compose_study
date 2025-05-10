@@ -1,10 +1,9 @@
-                                                                                                                     package com.example.compose_study
-
+package com.example.compose_study
 import android.R.attr.background
+import android.R.attr.shape
 import android.R.attr.text
 import android.R.attr.textColor
 import android.content.res.Configuration
-
 import android.os.Bundle
 import android.provider.Telephony
 import androidx.activity.ComponentActivity
@@ -19,12 +18,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -32,14 +34,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ButtonDefaults
+
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,7 +59,11 @@ import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
 import com.example.compose_study.ui.theme.Compose_studyTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,15 +72,36 @@ class MainActivity : ComponentActivity() {
       //  enableEdgeToEdge()
         setContent {
             Compose_studyTheme {
-               // MessageCard(Message("Jetpack Compose","study"))
-                Conversation(messages = MsgData.messages)
-                ButtonDemo()
+                Column {
+                    // MessageCard(Message("Jetpack Compose","study"))
+                    Conversation(messages = MsgData.messages)
+                    ButtonDemo()
+                    ImageDemo()
+                    Slidrdemo()
+                }
+
             }
         }
     }
     }
        data class Message(val author: String,val body: String)
        data class ButtonState(var text: String,var textColor: Color,var buttonColor: Color)
+/*@Composable
+fun VerticalScrollScreen(){
+    Column(modifier = Modifier
+        .verticalScroll(rememberScrollState())
+        .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+       Conversation(messages = MsgData.messages)
+        ButtonDemo()
+        ImageDemo()
+        Slidrdemo()
+        }
+
+    }*/
+
+        //卡片
      @Composable
      fun MessageCard(msg: Message){
          var isExpanded by remember { mutableStateOf(false) }
@@ -107,16 +139,18 @@ class MainActivity : ComponentActivity() {
              }
          }//modifiers用于改变尺寸
 
-     }}
+     }}//列表
         @Composable
         fun Conversation(messages: List<Message>){
-            LazyColumn {
+            LazyColumn (
+                modifier = Modifier.height(200.dp)
+            ){
                 items(messages) { messages ->
                     MessageCard(msg = messages)
                 }
             }}
+//按键
            @Composable
-
            fun ButtonDemo(){
 
              val interactionState =remember { MutableInteractionSource() }
@@ -138,9 +172,29 @@ class MainActivity : ComponentActivity() {
 
                }
            }
-
-
-
+@Composable
+fun ImageDemo(){
+    Image(
+        painter = painterResource(R.drawable.compose),
+        contentDescription=null,
+        modifier = Modifier.size(350.dp)
+    )
+}
+@Composable
+fun Slidrdemo(){
+    var progress by remember { mutableStateOf(0f) }
+    Slider(
+        value = progress,
+        colors=SliderDefaults.colors(
+            thumbColor = Color.White,
+            activeTrackColor = Color(0xFF0079D3)
+        ),
+        onValueChange = {
+            progress=it
+        },
+    )
+}
+//预览
            @Preview(
            uiMode = Configuration.UI_MODE_NIGHT_YES,
            showBackground = true,
