@@ -1,5 +1,6 @@
 package com.example.compose_study
 import android.R.attr.background
+import android.R.attr.fontWeight
 import android.R.attr.shape
 import android.R.attr.text
 import android.R.attr.textColor
@@ -9,6 +10,7 @@ import android.provider.Telephony
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Button
@@ -22,6 +24,7 @@ import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -29,6 +32,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,7 +44,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,20 +55,26 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.example.compose_study.ui.theme.Compose_studyTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -73,11 +85,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             Compose_studyTheme {
                 Column {
-                    // MessageCard(Message("Jetpack Compose","study"))
-                    Conversation(messages = MsgData.messages)
-                    ButtonDemo()
-                    ImageDemo()
-                    Slidrdemo()
+                   //  MessageCard(Message("Jetpack Compose","study"))
+                   // Conversation(messages = MsgData.messages)
+                   // ButtonDemo()
+                   // ImageDemo()
+                   // Slidrdemo()
+                    //Animademo()
+                    VerticalScrollScreen()
                 }
 
             }
@@ -86,12 +100,10 @@ class MainActivity : ComponentActivity() {
     }
        data class Message(val author: String,val body: String)
        data class ButtonState(var text: String,var textColor: Color,var buttonColor: Color)
-/*@Composable
+@Composable
 fun VerticalScrollScreen(){
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
-        .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
        Conversation(messages = MsgData.messages)
         ButtonDemo()
@@ -99,7 +111,7 @@ fun VerticalScrollScreen(){
         Slidrdemo()
         }
 
-    }*/
+    }
 
         //卡片
      @Composable
@@ -143,7 +155,7 @@ fun VerticalScrollScreen(){
         @Composable
         fun Conversation(messages: List<Message>){
             LazyColumn (
-                modifier = Modifier.height(200.dp)
+                modifier = Modifier.height(500.dp)
             ){
                 items(messages) { messages ->
                     MessageCard(msg = messages)
@@ -194,6 +206,60 @@ fun Slidrdemo(){
         },
     )
 }
+@Composable
+fun Animademo(){
+    var state by remember { mutableStateOf(true) }
+    Column(modifier = Modifier
+        .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
+        AnimatedVisibility(visible = state) {
+            Text(
+                text ="正文",
+                fontWeight= FontWeight.W900,
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+        Spacer(Modifier.padding(vertical = 50.dp))
+        Button(onClick = {state=!state}) {
+            Text(if(state){"隐藏"} else{"显示"})
+        }
+    }
+}
+
+
+/*@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeToRefreshText(
+    modifier: Modifier= Modifier
+){
+    val list=remember{
+        List(4){
+            "Item $it"
+        }.toMutableList()
+    }
+    var refreshing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val state = rememberPullToRefreshState(refreshing =refreshing,onRefresh={
+        scope.launch{
+            refreshing=true
+            delay(1000)
+            list+="Item ${list.size+1}"
+            refreshing=false
+        }
+    })
+    Box(modifier =modifier
+        .fillMaxSize()
+        .pullRefresh(state)){
+        LazyColumn(Modifier.fillMaxWidth()) {
+            //...
+        }
+        PullRefreshIndicator(refreshing,state,align(Alignment.TopCenter))
+    }
+}*/
+
+
+
 //预览
            @Preview(
            uiMode = Configuration.UI_MODE_NIGHT_YES,
