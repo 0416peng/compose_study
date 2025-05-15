@@ -18,6 +18,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.Image
+import androidx.compose.runtime.rememberCoroutineScope
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -59,6 +61,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -78,6 +84,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.example.compose_study.ui.theme.Compose_studyTheme
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -97,7 +104,8 @@ class MainActivity : ComponentActivity() {
                    // Slidrdemo()
                     //Animademo()
                   //  VerticalScrollScreen()
-                    Pagerdemo()
+                    //Pagerdemo()
+                    TabPagerWithIndicator()
                 }
 
             }
@@ -243,6 +251,34 @@ fun Pagerdemo(){
             0->Text("page1", modifier = Modifier.background(Color.Red))
             1->Text("page2", modifier = Modifier.background(Color.Green))
             2->Text("page3", modifier = Modifier.background(Color.Blue))
+        }
+    }
+}
+@Composable
+fun TabPagerWithIndicator(){
+    val coroutineScope=rememberCoroutineScope()
+    val tabs=listOf("Tab1","Tab2","Tab3")
+    val pagerState=rememberPagerState { tabs.size }
+    Column {
+        TabRow(
+            selectedTabIndex = pagerState.currentPage,
+            indicator = {tabPositons->
+                TabRowDefaults.Indicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositons[pagerState.currentPage]),
+                    color=Color.Red
+                )
+            }
+        ) {tabs.forEachIndexed { index,title->
+            Tab(selected=pagerState.currentPage==index,
+                onClick ={coroutineScope.launch { pagerState.animateScrollToPage(index) } } ,
+                text={Text(title)}
+                )
+        } }
+    }
+    HorizontalPager(state = pagerState) {page->
+        Box(modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center){
+            Text(text="page${page+1}")
         }
     }
 }
