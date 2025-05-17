@@ -69,6 +69,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,6 +81,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
@@ -105,7 +108,8 @@ class MainActivity : ComponentActivity() {
                     //Animademo()
                   //  VerticalScrollScreen()
                     //Pagerdemo()
-                    TabPagerWithIndicator()
+                    //TabPagerWithIndicator()
+                    CallCounter()
                 }
 
             }
@@ -282,6 +286,45 @@ fun TabPagerWithIndicator(){
         }
     }
 }
+@Composable
+fun CallCounter(modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel()) {
+    val count by viewModel.count.observeAsState(0)
+    val doubleCount by viewModel.doubleCount.observeAsState(0)
+    Column {
+        Counter(
+            count = count,
+            onIncrement = { viewModel.incrementCount() },
+            modifier.fillMaxWidth()
+        )
+        Counter(
+            count = doubleCount,
+            onIncrement = { viewModel.incrementDoubleCount() },
+            modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun Counter(count: Int, onIncrement: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "$count",
+            fontSize = 50.sp
+        )
+        Button(
+            onClick = { onIncrement() }
+        ) {
+            Text(
+                text = "Click me",
+                fontSize = 26.sp
+            )
+        }
+    }
+}
+
 /*@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeToRefreshText(

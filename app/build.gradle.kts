@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.8.1")
     implementation("com.google.accompanist:accompanist-pager:0.30.1")
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
     implementation(libs.androidx.core.ktx)
