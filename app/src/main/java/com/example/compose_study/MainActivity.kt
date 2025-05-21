@@ -66,6 +66,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -109,7 +110,8 @@ class MainActivity : ComponentActivity() {
                   //  VerticalScrollScreen()
                     //Pagerdemo()
                     //TabPagerWithIndicator()
-                    CallCounter()
+                   // CallCounter()
+                    TextFieldDemo()
                 }
 
             }
@@ -286,6 +288,7 @@ fun TabPagerWithIndicator(){
         }
     }
 }
+//结合ViewModel进行ui更新
 @Composable
 fun CallCounter(modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel()) {
     val count by viewModel.count.observeAsState(0)
@@ -324,36 +327,26 @@ fun Counter(count: Int, onIncrement: () -> Unit, modifier: Modifier = Modifier) 
         }
     }
 }
-
-/*@OptIn(ExperimentalMaterial3Api::class)
+//输入框
 @Composable
-fun SwipeToRefreshText(
-    modifier: Modifier= Modifier
-){
-    val list=remember{
-        List(4){
-            "Item $it"
-        }.toMutableList()
+fun TextFieldDemo(){
+    var text by remember { mutableStateOf("") }
+    Column (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        TextField(value = text,
+            onValueChange = {
+                text =it
+            },
+            singleLine = true,
+            label ={
+                Text("提示词")
+            }
+        )
     }
-    var refreshing by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    val state = rememberPullToRefreshState(refreshing =refreshing,onRefresh={
-        scope.launch{
-            refreshing=true
-            delay(1000)
-            list+="Item ${list.size+1}"
-            refreshing=false
-        }
-    })
-    Box(modifier =modifier
-        .fillMaxSize()
-        .pullRefresh(state)){
-        LazyColumn(Modifier.fillMaxWidth()) {
-            //...
-        }
-        PullRefreshIndicator(refreshing,state,align(Alignment.TopCenter))
-    }
-}*/
+
+}
 
 
 
